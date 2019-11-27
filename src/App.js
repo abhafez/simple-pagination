@@ -1,24 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import { dataGeneration } from "./dataGen";
+import Pagination from "./Pagination";
+import "./App.css";
 
 function App() {
+  const [data, setData] = useState({
+    numberOfItems: 0,
+    itemsPerPage: 0,
+    pageNumber: 0,
+    elements: []
+  });
+
+  function requestNewData(q) {
+    setData(dataGeneration(q));
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {data.elements.map(item => (
+        <div key={item}>{item}</div>
+      ))}
+      <Pagination
+        numberOfItems={data.numberOfItems}
+        itemsPerPage={data.itemsPerPage}
+        pageNumber={data.pageNumber}
+        onChangePage={q => requestNewData(q)}
+      />
     </div>
   );
 }
