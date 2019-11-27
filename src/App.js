@@ -7,7 +7,7 @@ function App() {
   const [data, setData] = useState({
     numberOfItems: 0,
     itemsPerPage: 0,
-    pageNumber: 0,
+    pageNumber: 1,
     elements: []
   });
 
