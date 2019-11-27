@@ -23,7 +23,9 @@ export function dataGeneration(page) {
     elements: []
   };
   for (let i = startingItem + 1; i <= endingItem + 1; i++) {
-    data.elements.push(`Item Number ${i}`);
+    if (numberOfItems >= i) {
+      data.elements.push(`Item Number ${i}`);
+    }
   }
   return data;
 }

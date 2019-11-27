@@ -5,43 +5,16 @@ import "semantic-ui-css/semantic.min.css";
 function Pagination(props) {
   const [currentPage, setCurrentPage] = useState(4);
   const LASTPAGE = Math.ceil(props.numberOfItems / props.itemsPerPage);
-  // console.log(LASTPAGE);
   const BeforeLast = LASTPAGE - 1;
 
   function navigation(e) {
     switch (e.target.innerHTML) {
-      case "⟨⟨":
-        setCurrentPage(1);
-        break;
-      case "⟨":
-        let prev = currentPage - 1;
-        setCurrentPage(prev);
-        break;
-      case "⟩⟩":
-        setCurrentPage(LASTPAGE);
-        break;
-      case "⟩":
-        if (currentPage === LASTPAGE) break;
-        let next = currentPage + 1;
-        setCurrentPage(next);
-        break;
-      default:
-        setCurrentPage(Number(e.target.innerHTML));
-        break;
     }
   }
 
   useEffect(() => {
-    let myEl = document.getElementsByClassName("item");
-    Array.from(myEl).forEach(el => {
-      el.addEventListener("click", e => navigation(e));
-      console.log("effect")
-    });
-    props.onChangePage(currentPage);
-    return Array.from(myEl).forEach(el => {
-      el.removeEventListener("click", e => navigation(e));
-      console.log("removed")
-    });
+    let index = currentPage - 1;
+    props.onChangePage(index);
   }, [currentPage]);
 
   const sequence = item => (
@@ -53,6 +26,7 @@ function Pagination(props) {
       value={item}
       type="pageItem"
       className={`${currentPage === item ? "active item" : "item"}`}
+      onClick={e => setCurrentPage(Number(e.target.innerHTML))}
     >
       {item}
     </div>
@@ -73,6 +47,9 @@ function Pagination(props) {
         aria-label="Previous item"
         type="firstItem"
         className="item"
+        onClick={() => {
+          setCurrentPage(1);
+        }}
       >
         ⟨⟨
       </div>
@@ -84,6 +61,10 @@ function Pagination(props) {
         aria-label="Previous item"
         type="prevItem"
         className="item"
+        onClick={() => {
+          let prev = currentPage - 1;
+          setCurrentPage(prev);
+        }}
       >
         ⟨
       </div>
@@ -103,6 +84,11 @@ function Pagination(props) {
         aria-label="Next item"
         type="nextItem"
         className="item"
+        onClick={() => {
+          if (currentPage === LASTPAGE) return;
+          let next = currentPage + 1;
+          setCurrentPage(next);
+        }}
       >
         ⟩
       </div>
@@ -114,6 +100,7 @@ function Pagination(props) {
         aria-label="Next item"
         type="nextItem"
         className="item"
+        onClick={() => setCurrentPage(LASTPAGE)}
       >
         ⟩⟩
       </div>
