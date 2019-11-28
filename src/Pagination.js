@@ -1,19 +1,16 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import "semantic-ui-css/semantic.min.css";
-
 function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
   const [currentPage, setCurrentPage] = useState(
     pageNumber === 0 ? 1 : pageNumber
   );
   const LASTPAGE = Math.ceil(numberOfItems / itemsPerPage);
   const BEFORELAST = LASTPAGE - 1;
-
   useEffect(() => {
     let index = currentPage - 1;
     onChangePage(index);
   }, [currentPage]);
-
   const previousButtons = () => (
     <>
       <div
@@ -36,7 +33,9 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         tabIndex="0"
         aria-label="Previous item"
         type="prevItem"
-        className={`${currentPage === 1 ? "disabled item" : "item"}`}
+        className={`${
+          currentPage === 1 || LASTPAGE === 1 ? "disabled item" : "item"
+        }`}
         onClick={() => {
           if (currentPage === 1) return;
           let prev = currentPage - 1;
@@ -68,7 +67,9 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         aria-disabled="false"
         aria-label="Next item"
         type="nextItem"
-        className={`${currentPage === LASTPAGE ? "disabled item" : "item"}`}
+        className={`${
+          currentPage === LASTPAGE || LASTPAGE === 1 ? "disabled item" : "item"
+        }`}
         onClick={() => {
           if (currentPage === LASTPAGE) return;
           let next = currentPage + 1;
@@ -91,7 +92,6 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       </div>
     </>
   );
-
   return (
     <div
       id="pagination-element"
@@ -100,8 +100,11 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       className="ui pagination menu"
     >
       {previousButtons()}
-      {currentPage <= 2 && [1, 2, 3].map(item => sequence(item))}
-      {currentPage >= BEFORELAST &&
+      {LASTPAGE === 1
+        ? [1].map(item => sequence(item))
+        : currentPage <= 2 && [1, 2, 3].map(item => sequence(item))}
+      {LASTPAGE !== 1 &&
+        currentPage >= BEFORELAST &&
         [BEFORELAST - 1, BEFORELAST, LASTPAGE].map(item => sequence(item))}
       {currentPage > 2 &&
         currentPage < BEFORELAST &&
@@ -112,7 +115,6 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
     </div>
   );
 }
-
 Pagination.propTypes = {
   pageNumber: PropTypes.number.isRequired,
   onChangePage: PropTypes.func.isRequired,

@@ -1,6 +1,6 @@
 export function dataGeneration(page) {
-  let numberOfItems = 99; // NOTE: change here to test
-  let itemsPerPage = 10; // NOTE: change here to test
+  let numberOfItems = 6; // NOTE: change here to test
+  let itemsPerPage = 7; // NOTE: change here to test
   let pageNumber, startingItem, endingItem;
 
   try {
