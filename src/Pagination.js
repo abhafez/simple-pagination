@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import "semantic-ui-css/semantic.min.css";
+import React, { useState } from "react";
+
 function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
-  const [currentPage, setCurrentPage] = useState(
-    pageNumber === 0 ? 1 : pageNumber
-  );
+  const [currentPage, setCurrentPage] = useState(pageNumber);
+
   const LASTPAGE = Math.ceil(numberOfItems / itemsPerPage);
   const BEFORELAST = LASTPAGE - 1;
-  useEffect(() => {
-    let index = currentPage - 1;
-    onChangePage(index);
-  }, [currentPage]);
+
+  const handleChangePage = pageNo => {
+    setCurrentPage(pageNo);
+    onChangePage(pageNo);
+  };
+
   const previousButtons = () => (
     <>
       <div
@@ -20,9 +20,11 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         value="1"
         aria-label="Previous item"
         type="firstItem"
-        className={`${currentPage === 1 ? "disabled item" : "item"}`}
+        className={`pagination-btn ${
+          currentPage === 1 ? "disabled item" : "item"
+        }`}
         onClick={() => {
-          setCurrentPage(1);
+          handleChangePage(1);
         }}
       >
         ⟨⟨
@@ -33,19 +35,20 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         tabIndex="0"
         aria-label="Previous item"
         type="prevItem"
-        className={`${
+        className={`pagination-btn ${
           currentPage === 1 || LASTPAGE === 1 ? "disabled item" : "item"
         }`}
         onClick={() => {
           if (currentPage === 1) return;
           let prev = currentPage - 1;
-          setCurrentPage(prev);
+          handleChangePage(prev);
         }}
       >
         ⟨
       </div>
     </>
   );
+
   const sequence = item => (
     <div
       key={item}
@@ -54,12 +57,15 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       tabIndex="0"
       value={item}
       type="pageItem"
-      className={`${currentPage === item ? "active item" : "item"}`}
-      onClick={e => setCurrentPage(Number(e.target.innerHTML))}
+      className={`pagination-btn ${
+        currentPage === item ? "active item" : "item"
+      }`}
+      onClick={() => handleChangePage(item)}
     >
       {item}
     </div>
   );
+
   const nextButtons = () => (
     <>
       <div
@@ -67,13 +73,13 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         aria-disabled="false"
         aria-label="Next item"
         type="nextItem"
-        className={`${
+        className={`pagination-btn ${
           currentPage === LASTPAGE || LASTPAGE === 1 ? "disabled item" : "item"
         }`}
         onClick={() => {
           if (currentPage === LASTPAGE) return;
           let next = currentPage + 1;
-          setCurrentPage(next);
+          handleChangePage(next);
         }}
       >
         ⟩
@@ -85,13 +91,16 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         tabIndex="0"
         aria-label="Next item"
         type="nextItem"
-        className={`${currentPage === LASTPAGE ? "disabled item" : "item"}`}
-        onClick={() => setCurrentPage(LASTPAGE)}
+        className={`pagination-btn ${
+          currentPage === LASTPAGE ? "disabled item" : "item"
+        }`}
+        onClick={() => handleChangePage(LASTPAGE)}
       >
         ⟩⟩
       </div>
     </>
   );
+
   return (
     <div
       id="pagination-element"
@@ -100,26 +109,26 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       className="ui pagination menu"
     >
       {previousButtons()}
-      {LASTPAGE === 1
-        ? [1].map(item => sequence(item))
-        : currentPage <= 2 && [1, 2, 3].map(item => sequence(item))}
-      {LASTPAGE !== 1 &&
+      {LASTPAGE === 1 && [1].map(item => sequence(item))}
+      {LASTPAGE === 2 && [1, 2].map(item => sequence(item))}
+      {LASTPAGE === 3 && [1, 2, 3].map(item => sequence(item))}
+      {LASTPAGE > 3 &&
+        currentPage > 3 &&
         currentPage >= BEFORELAST &&
         [BEFORELAST - 1, BEFORELAST, LASTPAGE].map(item => sequence(item))}
-      {currentPage > 2 &&
+      {LASTPAGE > 3 &&
+        currentPage > 3 &&
         currentPage < BEFORELAST &&
         [currentPage - 1, currentPage, currentPage + 1].map(item =>
           sequence(item)
         )}
+      {LASTPAGE > 3 &&
+        currentPage === 3 &&
+        [2, 3, 4].map(item => sequence(item))}
+      {LASTPAGE > 3 && currentPage < 3 && [1, 2, 3].map(item => sequence(item))}
       {nextButtons()}
     </div>
   );
 }
-Pagination.propTypes = {
-  pageNumber: PropTypes.number.isRequired,
-  onChangePage: PropTypes.func.isRequired,
-  numberOfItems: PropTypes.number.isRequired,
-  itemsPerPage: PropTypes.number.isRequired
-};
 
 export default Pagination;
