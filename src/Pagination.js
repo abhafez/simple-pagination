@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import "semantic-ui-css/semantic.min.css";
 function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
@@ -7,10 +7,11 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
   );
   const LASTPAGE = Math.ceil(numberOfItems / itemsPerPage);
   const BEFORELAST = LASTPAGE - 1;
-  const handleChangePage = pageNo => {
-    setCurrentPage(pageNo);
-    onChangePage(pageNo);
-  };
+  useEffect(() => {
+    let index = currentPage - 1;
+    onChangePage(index);
+  }, [currentPage]);
+
   const previousButtons = () => (
     <>
       <div
@@ -22,7 +23,7 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         type="firstItem"
         className={`${currentPage === 1 ? "disabled item" : "item"}`}
         onClick={() => {
-          handleChangePage(1);
+          setCurrentPage(1);
         }}
       >
         ⟨⟨
@@ -39,7 +40,7 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         onClick={() => {
           if (currentPage === 1) return;
           let prev = currentPage - 1;
-          handleChangePage(prev);
+          setCurrentPage(prev);
         }}
       >
         ⟨
@@ -55,7 +56,7 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       value={item}
       type="pageItem"
       className={`${currentPage === item ? "active item" : "item"}`}
-      onClick={() => handleChangePage(item)}
+      onClick={e => setCurrentPage(Number(e.target.innerHTML))}
     >
       {item}
     </div>
@@ -73,7 +74,7 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         onClick={() => {
           if (currentPage === LASTPAGE) return;
           let next = currentPage + 1;
-          handleChangePage(next);
+          setCurrentPage(next);
         }}
       >
         ⟩
@@ -86,7 +87,7 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         aria-label="Next item"
         type="nextItem"
         className={`${currentPage === LASTPAGE ? "disabled item" : "item"}`}
-        onClick={() => handleChangePage(LASTPAGE)}
+        onClick={() => setCurrentPage(LASTPAGE)}
       >
         ⟩⟩
       </div>
