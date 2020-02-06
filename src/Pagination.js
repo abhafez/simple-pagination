@@ -1,15 +1,16 @@
-import React, { useState } from "react";
-
+import React, { useState, useEffect } from "react";
+import PropTypes from "prop-types";
+import "semantic-ui-css/semantic.min.css";
 function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
-  const [currentPage, setCurrentPage] = useState(pageNumber);
-
+  const [currentPage, setCurrentPage] = useState(
+    pageNumber === 0 ? 1 : pageNumber
+  );
   const LASTPAGE = Math.ceil(numberOfItems / itemsPerPage);
   const BEFORELAST = LASTPAGE - 1;
-
-  const handleChangePage = pageNo => {
-    setCurrentPage(pageNo);
-    onChangePage(pageNo);
-  };
+  useEffect(() => {
+    let index = currentPage - 1;
+    onChangePage(index);
+  }, [currentPage]);
 
   const previousButtons = () => (
     <>
@@ -20,11 +21,9 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         value="1"
         aria-label="Previous item"
         type="firstItem"
-        className={`pagination-btn ${
-          currentPage === 1 ? "disabled item" : "item"
-        }`}
+        className={`${currentPage === 1 ? "disabled item" : "item"}`}
         onClick={() => {
-          handleChangePage(1);
+          setCurrentPage(1);
         }}
       >
         ⟨⟨
@@ -35,20 +34,19 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         tabIndex="0"
         aria-label="Previous item"
         type="prevItem"
-        className={`pagination-btn ${
+        className={`${
           currentPage === 1 || LASTPAGE === 1 ? "disabled item" : "item"
         }`}
         onClick={() => {
           if (currentPage === 1) return;
           let prev = currentPage - 1;
-          handleChangePage(prev);
+          setCurrentPage(prev);
         }}
       >
         ⟨
       </div>
     </>
   );
-
   const sequence = item => (
     <div
       key={item}
@@ -57,15 +55,12 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
       tabIndex="0"
       value={item}
       type="pageItem"
-      className={`pagination-btn ${
-        currentPage === item ? "active item" : "item"
-      }`}
-      onClick={() => handleChangePage(item)}
+      className={`${currentPage === item ? "active item" : "item"}`}
+      onClick={e => setCurrentPage(Number(e.target.innerHTML))}
     >
       {item}
     </div>
   );
-
   const nextButtons = () => (
     <>
       <div
@@ -73,13 +68,13 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         aria-disabled="false"
         aria-label="Next item"
         type="nextItem"
-        className={`pagination-btn ${
+        className={`${
           currentPage === LASTPAGE || LASTPAGE === 1 ? "disabled item" : "item"
         }`}
         onClick={() => {
           if (currentPage === LASTPAGE) return;
           let next = currentPage + 1;
-          handleChangePage(next);
+          setCurrentPage(next);
         }}
       >
         ⟩
@@ -91,16 +86,13 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
         tabIndex="0"
         aria-label="Next item"
         type="nextItem"
-        className={`pagination-btn ${
-          currentPage === LASTPAGE ? "disabled item" : "item"
-        }`}
-        onClick={() => handleChangePage(LASTPAGE)}
+        className={`${currentPage === LASTPAGE ? "disabled item" : "item"}`}
+        onClick={() => setCurrentPage(LASTPAGE)}
       >
         ⟩⟩
       </div>
     </>
   );
-
   return (
     <div
       id="pagination-element"
@@ -130,5 +122,11 @@ function Pagination({ numberOfItems, itemsPerPage, onChangePage, pageNumber }) {
     </div>
   );
 }
+Pagination.propTypes = {
+  pageNumber: PropTypes.number.isRequired,
+  onChangePage: PropTypes.func.isRequired,
+  numberOfItems: PropTypes.number.isRequired,
+  itemsPerPage: PropTypes.number.isRequired
+};
 
 export default Pagination;

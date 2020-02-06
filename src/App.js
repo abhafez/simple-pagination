@@ -12,6 +12,7 @@ function App() {
   });
 
   function requestNewData(q) {
+    console.log("app ", q);
     setData(dataGeneration(q));
   }
 

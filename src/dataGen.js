@@ -1,6 +1,7 @@
 export function dataGeneration(page) {
-  let numberOfItems = 6; // NOTE: change here to test
-  let itemsPerPage = 7; // NOTE: change here to test
+  console.log("first ", page);
+  let numberOfItems = 10; // NOTE: change here to test
+  let itemsPerPage = 2; // NOTE: change here to test
   let pageNumber, startingItem, endingItem;
 
   try {
@@ -11,7 +12,9 @@ export function dataGeneration(page) {
 
   if (Number(page) > 0) {
     startingItem = pageNumber * itemsPerPage;
+    console.log("starting item ", startingItem);
     endingItem = (pageNumber + 1) * itemsPerPage - 1;
+    console.log("ending item ", endingItem);
   } else {
     startingItem = 0;
     endingItem = itemsPerPage - 1;
@@ -24,8 +27,10 @@ export function dataGeneration(page) {
   };
   for (let i = startingItem + 1; i <= endingItem + 1; i++) {
     if (numberOfItems >= i) {
+      console.log("push");
       data.elements.push(`Item Number ${i}`);
     }
   }
+  console.log("data ", data);
   return data;
 }
